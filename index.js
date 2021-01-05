@@ -26,9 +26,18 @@ var guestbookListener = null;
 async function main() {
 
   // Add Firebase project configuration object here
-  // var firebaseConfig = {};
 
-  // firebase.initializeApp(firebaseConfig);
+
+  const firebaseConfig = {
+  apiKey: "AIzaSyBlbu3iLLWC4OL_dTHMOQozeF3ChjFHW7M",
+  authDomain: "wep-prueba.firebaseapp.com",
+  projectId: "wep-prueba",
+  storageBucket: "wep-prueba.appspot.com",
+  messagingSenderId: "685057742905",
+  appId: "1:685057742905:web:e2cd0ee27918b0dbc195e8"
+};
+
+  firebase.initializeApp(firebaseConfig);
 
   // FirebaseUI config
   const uiConfig = {
@@ -46,7 +55,32 @@ async function main() {
     }
   };
 
-  // const ui = new firebaseui.auth.AuthUI(firebase.auth());
+   const ui = new firebaseui.auth.AuthUI(firebase.auth());
+
+
+// Called when the user clicks the RSVP button
+startRsvpButton.addEventListener("click",
+ () => {
+    if (firebase.auth().currentUser) {
+      // User is signed in; allows user to sign out
+      firebase.auth().signOut();
+    } else {
+      // No user is signed in; allows user to sign in
+      ui.start("#firebaseui-auth-container", uiConfig);
+    }
+});
+
+
+// Listen to the current Auth state
+firebase.auth().onAuthStateChanged((user)=> {
+  if (user) {
+    startRsvpButton.textContent = "LOGOUT"
+  }
+  else {
+    startRsvpButton.textContent = "RSVP"
+  }
+});
+
 }
 main();
 
