@@ -72,14 +72,25 @@ startRsvpButton.addEventListener("click",
 
 
 // Escuche el estado de autenticación actual
-firebase.auth().onAuthStateChanged((user)=> {
-  if (user) {
-    startRsvpButton.textContent = "LOGOUT"
-  }
-  else {
-    startRsvpButton.textContent = "RSVP"
-  }
+// Listen to the current Auth state
+firebase.auth().onAuthStateChanged((user) => {
+ if (user){
+   startRsvpButton.textContent = "LOGOUT";
+   // Show guestbook to logged-in users
+   guestbookContainer.style.display = "block";
+
+   // Subscribe to the guestbook collection
+  subscribeGuestbook();
+ }
+ else{
+   startRsvpButton.textContent = "RSVP";
+   // Hide guestbook for non-logged-in users
+   guestbookContainer.style.display = "none";
+   // Unsubscribe from the guestbook collection
+   unsubscribeGuestbook();
+ }
 });
+
 // Listen to the form submission
 form.addEventListener("submit", (e) => {
  // Prevent the default form redirect
@@ -96,6 +107,33 @@ form.addEventListener("submit", (e) => {
  // Return false to avoid redirect
  return false;
 });
+
+// Listen to guestbook updates
+function subscribeGuestbook(){
+   // Create query for messages
+ guestbookListener = firebase.firestore().collection("guestbook")
+ .orderBy("timestamp","desc")
+ .onSnapshot((snaps) => {
+   // Reset page
+   guestbook.innerHTML = "";
+   // Loop through documents in database
+   snaps.forEach((doc) => {
+     // Create an HTML entry for each document and add it to the chat
+     const entry = document.createElement("p");
+     entry.textContent = doc.data().name + ": " + doc.data().text;
+     guestbook.appendChild(entry);
+   });
+ });
+};
+
+// Unsubscribe from guestbook updates
+function unsubscribeGuestbook(){
+ if (guestbookListener != null)
+ {
+   guestbookListener();
+   guestbookListener = null;
+ }
+};
 
 }
 main();
