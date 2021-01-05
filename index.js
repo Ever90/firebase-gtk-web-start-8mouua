@@ -58,7 +58,7 @@ async function main() {
    const ui = new firebaseui.auth.AuthUI(firebase.auth());
 
 
-// Called when the user clicks the RSVP button
+// Llamado cuando el usuario hace clic en el botón RSVP
 startRsvpButton.addEventListener("click",
  () => {
     if (firebase.auth().currentUser) {
@@ -71,7 +71,7 @@ startRsvpButton.addEventListener("click",
 });
 
 
-// Listen to the current Auth state
+// Escuche el estado de autenticación actual
 firebase.auth().onAuthStateChanged((user)=> {
   if (user) {
     startRsvpButton.textContent = "LOGOUT"
